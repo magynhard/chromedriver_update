@@ -1,0 +1,2 @@
+class ChromeNotFoundError < StandardError
+end

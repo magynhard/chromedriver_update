@@ -1,3 +1,3 @@
-module ChromedriverUpdate
-  VERSION = '0.0.1'.freeze
+class ChromedriverUpdate
+  VERSION = '0.0.5'.freeze
 end

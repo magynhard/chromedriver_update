@@ -8,6 +8,7 @@ require 'fileutils'
 require 'json'
 
 require_relative 'custom_errors/chromedriver_not_found_error'
+require_relative 'custom_errors/chrome_not_found_error'
 
 class ChromedriverUpdate
 
@@ -40,7 +41,6 @@ class ChromedriverUpdate
     end
   end
 
-
   #
   # Get the currently installed version of chrome
   #
@@ -55,11 +55,16 @@ class ChromedriverUpdate
         version = `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version`
         version.scan(/([0-9\.]+)/).flatten.first
       else
-        version = `google-chrome --version`
+        version = ""
+        begin
+          version = `google-chrome --version`
+        rescue Errno::ENOENT => e
+          version = `google-chrome-stable --version`
+        end
         version.scan(/([0-9\.]+)/).flatten.first
       end
-    rescue
-      raise "Could not detect installed chrome version!"
+    rescue => e
+      raise ChromeNotFoundError.new "Could not detect a installed chrome version!"
     end
   end
 
@@ -97,8 +102,8 @@ class ChromedriverUpdate
                  "linux64"
                end
     list = JSON.parse(HTTParty.get(CHROME_DOWNLOADS_LIST_URL).body)
-    latest_match = list['versions'].filter{|el| el['version'].start_with?(version.split(".")[0...1].join(".")) && el['version'].split(".")[2].to_i < version.split(".")[2].to_i && el['downloads']['chromedriver']}.last
-    latest_match['downloads']['chromedriver'].filter{ |el| el['platform'] == platform }.first['url']
+    latest_match = list['versions'].filter { |el| el['version'].start_with?(version.split(".")[0...1].join(".")) && el['version'].split(".")[2].to_i < version.split(".")[2].to_i && el['downloads']['chromedriver'] }.last
+    latest_match['downloads']['chromedriver'].filter { |el| el['platform'] == platform }.first['url']
   end
 
   #

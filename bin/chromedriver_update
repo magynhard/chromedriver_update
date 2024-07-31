@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
 
-require 'chromedriver_update'
+require_relative '../lib/chromedriver_update'
 
 arg = ARGV[0]
 
-if %w[help -h --help].include?(arg) || arg.nil? || arg == ''
+if %w[version -v --version].include?(arg)
+  puts "#{ChromedriverUpdate::VERSION}"
+elsif arg.nil? || arg == ''
+  ChromedriverUpdate.auto_update_chromedriver
+else
   puts <<-TEXT
     
     chromedriver_update #{ChromedriverUpdate::VERSION}
@@ -15,10 +19,4 @@ if %w[help -h --help].include?(arg) || arg.nil? || arg == ''
     chromedriver_update               # automatically update the current chromedriver version fitting to the currently installed chrome
 
   TEXT
-elsif %w[version -v --version].include?(arg)
-  puts "#{ChromedriverUpdate::VERSION}"
-else
-  ChromedriverUpdate.auto_update_chromedriver
 end
-
-puts "gurka"
