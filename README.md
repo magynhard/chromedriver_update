@@ -47,7 +47,7 @@ Of course you need to have installed Ruby on your system and set the PATH variab
 ### Example
 
 ```ruby
-require 'scripts/chromedriver_update'
+require 'chromedriver_update'
 
 ChromedriverUpdate.auto_update_chromedriver
 ```
