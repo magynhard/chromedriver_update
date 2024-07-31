@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.summary       = %q{Update an existing installation of chromedriver fitting to the current installed version of chrome}
   spec.homepage      = "https://github.com/magynhard/chromedriver_update"
   spec.license       = "MIT"
+  spec.metadata      = { "source_code_uri" => "https://github.com/magynhard/chromedriver_update" }
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
