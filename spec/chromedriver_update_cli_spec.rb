@@ -1,5 +1,5 @@
-require "spec_helper"
-require "json"
+require 'spec_helper'
+require 'json'
 
 BINARY_PATH = File.expand_path './bin/chromedriver_update'
 

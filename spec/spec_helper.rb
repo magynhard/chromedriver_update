@@ -1,5 +1,5 @@
-require "bundler/setup"
-require "chromedriver_update"
+require 'bundler/setup'
+require_relative '../lib/chromedriver_update'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
