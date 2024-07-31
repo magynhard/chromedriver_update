@@ -1,0 +1,2 @@
+class ChromedriverNotFoundError < StandardError
+end
