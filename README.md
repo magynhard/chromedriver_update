@@ -5,9 +5,9 @@
 
 > Update an existing installation of chromedriver fitting to the current installed version of chrome. Available for Ruby and as CLI command as well.
 
-Very basic tool, to ensure, that the current chromedriver is updat to date to the current installed Chrome. Automatically fetches the same driver version or the latest version below, to ensure it will work with the current installed chrome version.
+Very basic tool, to ensure, that the current chromedriver is up to date to the current installed Chrome. Automatically fetches the same driver version or the latest version below, to ensure it will work with the current installed chrome version.
 
-The installed chromedriver is replaced with the new version. So it must have been setup initially and added to the PATH environment variable to use this script from then.
+The installed chromedriver is replaced with the new version. So it must have been setup already and added to the PATH environment variable to use this script from then.
 
 Implemented for Linux, Windows and Mac.
 
