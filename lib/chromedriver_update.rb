@@ -1,5 +1,3 @@
-require 'chromedriver_update/version'
-
 require 'os'
 require 'open-uri'
 require 'zip'
@@ -7,6 +5,7 @@ require 'httparty'
 require 'fileutils'
 require 'json'
 
+require_relative 'chromedriver_update/version'
 require_relative 'custom_errors/chromedriver_not_found_error'
 require_relative 'custom_errors/chrome_not_found_error'
 
