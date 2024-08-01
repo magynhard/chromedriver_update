@@ -16,8 +16,8 @@ class ChromedriverUpdate
   #
   # Update the installed version of chromedriver automatically fitting to the currently installed version of chrome
   #
-  def self.auto_update_chromedriver
-    if installed_chrome_version.split(".").first != installed_chromedriver_version.split(".").first
+  def self.auto_update_chromedriver(force: false)
+    if installed_chrome_version.split(".").first != installed_chromedriver_version.split(".").first || force
       original_chromedriver_version = installed_chromedriver_version
       chromedriver_zip = HTTParty.get(chromedriver_link_for_version(installed_chrome_version))
       if chromedriver_zip.code == 404 # fallback to latest lower version
@@ -32,6 +32,16 @@ class ChromedriverUpdate
             FileUtils.rm_f(download_path)
             entry.extract(download_path)
             FileUtils.mv(download_path, chromedriver_path, force: true)
+            begin
+              FileUtils.chmod("+x", chromedriver_path)
+            rescue
+              unless OS.windows?
+                begin
+                  `sudo chmod +x "#{chromedriver_path}"`
+                rescue
+                end
+              end
+            end
           end
         end
       end
