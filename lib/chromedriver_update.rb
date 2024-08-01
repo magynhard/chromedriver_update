@@ -51,7 +51,7 @@ class ChromedriverUpdate
         version = `reg query "HKEY_CURRENT_USER\\Software\\Google\\Chrome\\BLBeacon" /v version`
         version.scan(/version[^0-9]*([0-9\.]+)/).flatten.first
       elsif OS.mac?
-        version = `/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version`
+        version = `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --version`
         version.scan(/([0-9\.]+)/).flatten.first
       else
         version = ""
