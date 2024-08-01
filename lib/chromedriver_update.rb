@@ -81,7 +81,7 @@ class ChromedriverUpdate
     if OS.windows?
       "https://storage.googleapis.com/chrome-for-testing-public/#{version}/win64/chromedriver-win64.zip"
     elsif OS.mac?
-      "https://storage.googleapis.com/chrome-for-testing-public/#{version}/mac-arm64/chromedriver-mac-arm64.zip"
+      "https://storage.googleapis.com/chrome-for-testing-public/#{version}/#{mac_platform}/chromedriver-mac-arm64.zip"
     else
       "https://storage.googleapis.com/chrome-for-testing-public/#{version}/linux64/chromedriver-linux64.zip"
     end
@@ -97,13 +97,25 @@ class ChromedriverUpdate
     platform = if OS.windows?
                  "win64"
                elsif OS.mac?
-                 "mac-arm64"
+                 mac_platform
                else
                  "linux64"
                end
     list = JSON.parse(HTTParty.get(CHROME_DOWNLOADS_LIST_URL).body)
     latest_match = list['versions'].filter { |el| el['version'].start_with?(version.split(".")[0...1].join(".")) && el['version'].split(".")[2].to_i < version.split(".")[2].to_i && el['downloads']['chromedriver'] }.last
     latest_match['downloads']['chromedriver'].filter { |el| el['platform'] == platform }.first['url']
+  end
+
+  #
+  # Detect macOS platform
+  #
+  # @return [String] platform for macos
+  def self.mac_platform
+    if RUBY_PLATFORM.include?("x86") || RUBY_PLATFORM.include?("x64")
+      'mac-x64'
+    else
+      'mac-arm64'
+    end
   end
 
   #
