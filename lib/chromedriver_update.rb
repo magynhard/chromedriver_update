@@ -16,6 +16,8 @@ class ChromedriverUpdate
   #
   # Update the installed version of chromedriver automatically fitting to the currently installed version of chrome
   #
+  # @param [Boolean] force=false force the update, even if the version is already installed
+  #
   def self.auto_update_chromedriver(force: false)
     if installed_chrome_version.split(".").first != installed_chromedriver_version.split(".").first || force
       original_chromedriver_version = installed_chromedriver_version
