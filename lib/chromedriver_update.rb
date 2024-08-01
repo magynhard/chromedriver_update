@@ -24,6 +24,7 @@ class ChromedriverUpdate
         chromedriver_zip = HTTParty.get(chromedriver_closest_link_for_version(installed_chrome_version))
       end
       destination_dir = File.expand_path(File.dirname(__FILE__) + "/../tmp")
+      FileUtils.mkdir_p destination_dir
       Zip::File.open_buffer(chromedriver_zip.body) do |zip_files|
         zip_files.each do |entry|
           if (entry.name.end_with?("/chromedriver") || entry.name.end_with?("/chromedriver.exe"))
