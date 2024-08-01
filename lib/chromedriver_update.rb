@@ -38,15 +38,10 @@ class ChromedriverUpdate
             unless OS.windows?
               begin
                 FileUtils.chmod("+x", original_chromedriver_path)
-                `chmod +x "#{original_chromedriver_path}"`
               rescue
                 begin
-                  `chmod +x "#{original_chromedriver_path}"`
+                  `sudo chmod +x "#{original_chromedriver_path}"`
                 rescue
-                  begin
-                    `sudo chmod +x "#{original_chromedriver_path}"`
-                  rescue
-                  end
                 end
               end
             end
