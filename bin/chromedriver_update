@@ -6,6 +6,8 @@ arg = ARGV[0]
 
 if %w[version -v --version].include?(arg)
   puts "#{ChromedriverUpdate::VERSION}"
+elsif %w[status -s --status].include?(arg)
+  ChromedriverUpdate.print_version_status
 elsif arg.nil? || arg == '' || %w[force -f --force].include?(arg)
   force = %w[force -f --force].include?(arg)
   ChromedriverUpdate.auto_update_chromedriver force: force
@@ -18,7 +20,8 @@ else
     chromedriver_update               # automatically update the current chromedriver version fitting to the currently installed chrome
     chromedriver_update -f --force    # force automatic update, even if the latest version is already installed
     chromedriver_update -h --help     # show this info
-    chromedriver_update -v --version  # show the libraries current version
+    chromedriver_update -s --status   # list current and available version(s) of chromedriver and chrome
+    chromedriver_update -v --version  # show the current version of chromedriver_update
 
   TEXT
 end

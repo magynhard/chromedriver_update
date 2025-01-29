@@ -25,6 +25,9 @@ class ChromedriverUpdate
       chromedriver_zip = HTTParty.get(chromedriver_link_for_version(installed_chrome_version))
       if chromedriver_zip.code == 404 # fallback to latest lower version
         chromedriver_zip = HTTParty.get(chromedriver_closest_link_for_version(installed_chrome_version))
+        puts "Could not find same chromedriver version for chrome version '#{installed_chrome_version}'. Fallback to closest version '#{installed_chrome_version}'"
+      else
+        puts "Found same chromedriver version '#{installed_chrome_version}' for chrome version '#{installed_chrome_version}'"
       end
       destination_dir = File.expand_path(File.dirname(__FILE__) + "/../tmp")
       FileUtils.mkdir_p destination_dir
@@ -100,6 +103,29 @@ class ChromedriverUpdate
     end
   end
 
+
+  def self.print_version_status
+    puts "Installed versions"
+    puts "- chrome: #{installed_chrome_version}"
+    puts "- chromedriver: #{installed_chromedriver_version} @ #{chromedriver_path}"
+    puts
+    puts "Available versions of chromedriver"
+    exact = if remote_file_exists? chromedriver_link_for_version(installed_chrome_version)
+              installed_chrome_version
+            else
+              "not found"
+            end
+    closest = if remote_file_exists? chromedriver_closest_link_for_version(installed_chrome_version)
+                chromedriver_closest_version_for_version(installed_chrome_version)
+              else
+                "not found"
+              end
+    puts "- exact match: #{exact}"
+    puts "  -> #{chromedriver_link_for_version(installed_chrome_version)}" if exact != "not found"
+    puts "- closest lower match: #{closest}"
+    puts "  -> #{chromedriver_closest_link_for_version(installed_chrome_version)}" if closest != "not found"
+  end
+
   #
   # Get the download URL of the closest chromedriver version fitting the given chrome version
   #
@@ -117,6 +143,12 @@ class ChromedriverUpdate
     list = JSON.parse(HTTParty.get(CHROME_DOWNLOADS_LIST_URL).body)
     latest_match = list['versions'].filter { |el| el['version'].start_with?(version.split(".")[0...1].join(".")) && el['version'].split(".")[2].to_i < version.split(".")[2].to_i && el['downloads']['chromedriver'] }.last
     latest_match['downloads']['chromedriver'].filter { |el| el['platform'] == platform }.first['url']
+  end
+
+  def self.chromedriver_closest_version_for_version(version)
+    list = JSON.parse(HTTParty.get(CHROME_DOWNLOADS_LIST_URL).body)
+    latest_match = list['versions'].filter { |el| el['version'].start_with?(version.split(".")[0...1].join(".")) && el['version'].split(".")[2].to_i < version.split(".")[2].to_i && el['downloads']['chromedriver'] }.last
+    latest_match['version']
   end
 
   #
@@ -147,5 +179,13 @@ class ChromedriverUpdate
     else
       version
     end
+  end
+
+  #
+  # Check if a remote file exists, without downloading it, by checking header (OPTIONS)
+  # @param [String] url to check
+  def self.remote_file_exists?(url)
+    response = HTTParty.head(url)
+    response.success?
   end
 end

@@ -67,6 +67,16 @@ chromedriver_update
 # => Updated Chromedriver from '123.0.0' to '124.0.0'! Chrome is '124.0.1'.
 ```
 
+### Options
+
+```bash
+    chromedriver_update               # automatically update the current chromedriver version fitting to the currently installed chrome
+    chromedriver_update -f --force    # force automatic update, even if the latest version is already installed
+    chromedriver_update -h --help     # show this info
+    chromedriver_update -s --status   # list current and available version(s) of chromedriver and chrome
+    chromedriver_update -v --version  # show the current version of chromedriver_update
+```
+
 <a name="documentation"></a>
 ## Documentation
 
