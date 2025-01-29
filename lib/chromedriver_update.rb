@@ -22,29 +22,36 @@ class ChromedriverUpdate
     if installed_chrome_version.split(".").first != installed_chromedriver_version.split(".").first || force
       original_chromedriver_version = installed_chromedriver_version
       original_chromedriver_path = chromedriver_path
+      puts "Downloading chromedriver ..."
       chromedriver_zip = HTTParty.get(chromedriver_link_for_version(installed_chrome_version))
       if chromedriver_zip.code == 404 # fallback to latest lower version
-        chromedriver_zip = HTTParty.get(chromedriver_closest_link_for_version(installed_chrome_version))
         puts "Could not find same chromedriver version for chrome version '#{installed_chrome_version}'. Fallback to closest version '#{installed_chrome_version}'"
+        puts "-> #{chromedriver_closest_link_for_version(installed_chrome_version)}"
+        chromedriver_zip = HTTParty.get(chromedriver_closest_link_for_version(installed_chrome_version))
       else
         puts "Found same chromedriver version '#{installed_chrome_version}' for chrome version '#{installed_chrome_version}'"
+        puts "-> #{chromedriver_link_for_version(installed_chrome_version)}"
       end
-      destination_dir = File.expand_path(File.dirname(__FILE__) + "/../tmp")
-      FileUtils.mkdir_p destination_dir
-      Zip::File.open_buffer(chromedriver_zip.body) do |zip_files|
-        zip_files.each do |entry|
-          if (entry.name.end_with?("/chromedriver") || entry.name.end_with?("/chromedriver.exe"))
-            download_path = File.join(destination_dir, File.basename(entry.name))
-            FileUtils.rm_f(download_path)
-            entry.extract(download_path)
-            FileUtils.mv(download_path, chromedriver_path, force: true)
-            unless OS.windows?
-              begin
-                FileUtils.chmod("+x", original_chromedriver_path)
-              rescue
+      Dir.mktmpdir do |destination_dir|
+        Zip::File.open_buffer(chromedriver_zip.body) do |zip_files|
+          zip_files.each do |entry|
+            if (entry.name.end_with?("/chromedriver") || entry.name.end_with?("/chromedriver.exe"))
+              download_path = File.join(destination_dir, File.basename(entry.name))
+              entry.extract(download_path)
+              FileUtils.chmod("+x", download_path)
+              unless File.writable?(original_chromedriver_path)
+                puts "Permission denied to overwrite current chromedriver. Please run the script as admin or change the file permissions of the current chromedriver."
+                exit 1
+              end
+              FileUtils.mv(download_path, chromedriver_path, force: true)
+              unless OS.windows?
                 begin
-                  `sudo chmod +x "#{original_chromedriver_path}"`
+                  FileUtils.chmod("+x", original_chromedriver_path)
                 rescue
+                  begin
+                    `sudo chmod +x "#{original_chromedriver_path}"`
+                  rescue
+                  end
                 end
               end
             end
